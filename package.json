@@ -1,0 +1,241 @@
+{
+    "name": "text-novel",
+    "displayName": "テキスト小説",
+    "description": "テキストで小説を書く際のルビ追加やプレビューが表示できる拡張機能です。",
+    "version": "0.0.1",
+    "publisher": "vscode-text-novel",
+    "icon": "icon.png",
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/gearsns/vscode-textnovel"
+	},
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:aozoratext",
+        "onLanguage:naroutext",
+        "onCommand:textNovel.launchPreview.vscode",
+        "onCommand:textNovel.launchPreview.browser",
+        "onCommand:textNovel.launchPreview.server"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "TextNovel:テキスト小説",
+            "properties": {
+                "server.httpserver port": {
+                    "type": "number",
+                    "default": "8080",
+                    "description": "Webサーバーのポート番号"
+                },
+                "server.wsserver port": {
+                    "type": "number",
+                    "default": "5001",
+                    "description": "WebSocketサーバーのポート番号"
+                },
+                "editor.delay time": {
+                    "type": "number",
+                    "default": "500",
+                    "description": "プレビュー反映までの遅延時間(ミリ秒)"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "textNovel.launchPreview.vscode",
+                "title": "TextNovel:プレビューを表示",
+                "icon": "$(open-preview)"
+            },
+            {
+                "command": "textNovel.launchPreview.browser",
+                "title": "TextNovel:ブラウザでプレビューを表示"
+            },
+            {
+                "command": "textNovel.startPreviewServer",
+                "title": "TextNovel:サーバーの開始"
+            },
+            {
+                "command": "textNovel.closePreviewServer",
+                "title": "TextNovel:サーバーの停止"
+            },
+            {
+                "command": "textNovel.insertRuby",
+                "title": "TextNovel:ルビを振る",
+                "icon": "$(ruby)"
+            },
+            {
+                "command": "textNovel.insertDots",
+                "title": "TextNovel:傍点を振る",
+                "icon": "$(bold)"
+            },
+            {
+                "command": "textNovel.insertAozoraAnnotation",
+                "title": "TextNovel:青空文庫注記を追加"
+            }
+        ],
+        "keybindings":[
+            {
+                "command": "textNovel.insertRuby",
+                "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                "key": "ctrl+alt+z",
+                "mac": "cmd+option+z"
+            },
+            {
+                "command": "textNovel.insertDots",
+                "when": "editorLangId == aozoratext && editorHasSelection || editorLangId == naroutext && editorHasSelection",
+                "key": "ctrl+alt+x",
+                "mac": "cmd+option+x"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "textNovel.launchPreview.vscode",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "textNovel.insertDots",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "textNovel.insertRuby",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "navigation@1"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "textNovel.insertRuby",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "1_textnovel@1"
+                },
+                {
+                    "command": "textNovel.insertDots",
+                    "when": "editorLangId == aozoratext && editorHasSelection || editorLangId == naroutext && editorHasSelection",
+                    "group": "1_textnovel@2"
+                },
+                {
+                    "command": "textNovel.insertAozoraAnnotation",
+                    "when": "editorLangId == aozoratext",
+                    "group": "1_textnovel@3"
+                },
+                {
+                    "command": "textNovel.launchPreview.vscode",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "1_textnovel_server@1"
+                },
+                {
+                    "command": "textNovel.launchPreview.browser",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "1_textnovel_server@2"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "textNovel.insertRuby",
+                    "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.insertDots",
+                    "when": "editorLangId == aozoratext && editorHasSelection || editorLangId == naroutext && editorHasSelection",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.insertAozoraAnnotation",
+                    "when": "editorLangId == aozoratext",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.startPreviewServer",
+                    "when": "!TextNovelServerOn",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.launchPreview.vscode",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.launchPreview.browser",
+                    "group": "1_textnovel"
+                },
+                {
+                    "command": "textNovel.closePreviewServer",
+                    "when": "TextNovelServerOn",
+                    "group": "1_textnovel"
+                }
+            ]
+        },
+        "languages": [
+            {
+                "id": "naroutext",
+                "aliases": [
+                    "小説家になろう",
+                    "naroutext"
+                ],
+                "extensions": [
+                    ".txt"
+                ],
+                "configuration": "./narou-language-configuration.json"
+            },
+            {
+                "id": "aozoratext",
+                "aliases": [
+                    "青空文庫",
+                    "aozoratext"
+                ],
+                "extensions": [
+                    ".txt"
+                ],
+                "configuration": "./aozora-language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "naroutext",
+                "scopeName": "source.narou",
+                "path": "./syntaxes/narou-txt.tmLanguage.json"
+            },
+            {
+                "language": "aozoratext",
+                "scopeName": "source.aozora",
+                "path": "./syntaxes/aozora-txt.tmLanguage.json"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.2.2",
+        "@types/node": "14.x",
+        "@types/vscode": "^1.60.0",
+        "@types/ws": "^7.4.7",
+        "@typescript-eslint/eslint-plugin": "^4.26.0",
+        "@typescript-eslint/parser": "^4.26.0",
+        "esbuild": "^0.12.26",
+        "eslint": "^7.27.0",
+        "glob": "^7.1.7",
+        "mocha": "^8.4.0",
+        "typescript": "^4.3.2",
+        "vscode-test": "^1.5.2"
+    },
+    "dependencies": {
+        "axios": "^0.21.4",
+        "iconv-lite": "^0.6.3",
+        "ws": "^8.2.2"
+    }
+}

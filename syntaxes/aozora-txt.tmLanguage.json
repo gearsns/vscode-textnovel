@@ -1,0 +1,56 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "aozora text",
+	"patterns": [
+		{
+			"include": "#command"
+		},
+		{
+			"include": "#ruby"
+		},
+		{
+			"include": "#keywords"
+		}
+	],
+	"repository": {
+		"command": {
+			"patterns": [{
+				"match": "(＃［)(.*?)(］)",
+				"captures":{
+					"1": {
+						"name": "keyword.control.txt"
+					},
+					"2": {
+						"name": "string"
+					},
+					"3": {
+						"name": "keyword.control.txt"
+					}
+				}
+			}]
+		},
+		"ruby": {
+			"patterns": [{
+				"match": "[^\\|｜]+(《)(.*?)(》)",
+				"captures":{
+					"1": {
+						"name": "keyword.control.txt"
+					},
+					"2": {
+						"name": "string"
+					},
+					"3": {
+						"name": "keyword.control.txt"
+					}
+				}
+			}]
+		},
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.txt",
+				"match": "[\\|｜]"
+			}]
+		}
+	},
+	"scopeName": "source.aozora"
+}

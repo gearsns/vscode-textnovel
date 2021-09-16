@@ -1,0 +1,1656 @@
+@import url(./loaders.css);
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap");
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    -webkit-text-size-adjust: 100%;
+    font-size: 62.5%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+:focus {
+    outline: none;
+}
+
+#TxtMiruTopContents {
+    display: none;
+}
+main.TxtMiru {
+    position: fixed;
+    margin: 0;
+    height: 100%;
+    width: calc(100% + 1px);
+    background: #f7f6eb;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    /*font*/
+    font-size: 1.8rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+}
+
+main.TxtMiru:focus {
+    outline: none;
+}
+
+main.zoom_p1 {
+    font-size: 2.2rem;
+}
+
+main.zoom_m1 {
+    font-size: 1.6rem;
+}
+
+#contents {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    line-height: 1.8;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+    height: calc(100% - 8rem);
+    padding-top: 5rem;
+    /* 折り返し設定 */
+    word-break: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-break: strict;
+    hanging-punctuation: allow-end;
+    hyphens: auto;
+}
+
+#contents img {
+    max-height: 100%;
+    width: auto !important;
+}
+
+#contents.contents a {
+    color: black;
+}
+
+a:visited {
+    color: black
+}
+
+ruby[data-ruby] {
+    position: relative;
+    line-height: 0.1;
+    display: inline-block;
+}
+
+ruby[data-ruby]::after {
+    content: attr(data-ruby);
+    position: absolute;
+    white-space: nowrap;
+    line-height: 100%;
+    text-align: center;
+    top: -20em;
+    bottom: -20em;
+    transform-origin: center right;
+    /* ルビの文字サイズを親文字に対する比率で指定 */
+    transform: translate3d(1em, 0, 0) scale(0.5);
+    /* 100%を越える部分が親文字とルビとのスペースになる。単位は親文字に対する比率 */
+    /*right: 105%;*/
+    /* デバッグ用 */
+    /*background-color: rgba(255, 0, 0, 0.2);*/
+    letter-spacing: 0em;
+}
+
+ruby[rt-spacing]::after {
+    letter-spacing: var(--rt-letter-spacing);
+    margin-top: var(--rt-margin-top);
+    margin-bottom: var(--rt-margin-bottom);
+    /*background-color: rgba(255, 255, 0, 0.2);*/
+}
+
+ruby[rt-emphasis]::after {
+    letter-spacing: var(--rt-letter-spacing);
+    margin-top: var(--rt-margin-top);
+    margin-bottom: var(--rt-margin-bottom);
+    transform: translate3d(1em, 0, 0) scale(0.4);
+}
+
+ruby[data-ruby] rt {
+    display: none;
+}
+
+.prev-episode,
+.next-episode {
+    font-size: 0.8em;
+    height: 100%;
+    background: #18b7cd;
+    padding-top: 5.5vh;
+    padding-bottom: 5.5vh;
+    padding-right: 0.8em;
+    cursor: pointer;
+}
+
+.prev-episode {
+    padding-left: 0.8em;
+    margin-left: 1em;
+    margin-right: -1px;
+}
+
+.next-episode {
+    padding-left: 10vw;
+    min-width: 2rem;
+    width: 10vw;
+    margin-right: 90vw;
+}
+
+.prev-episode a,
+.next-episode a {
+    color: #f3f3f8 !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.prev-episode,
+.next-episode {
+    position: relative;
+    background: #18b7cd url(seigaiha.png);
+    z-index: 1;
+    overflow: hidden;
+}
+
+.prev-episode::after,
+.next-episode::after {
+    content: '';
+    position: absolute;
+    background: linear-gradient(to bottom, #18b7cd 0%, #18b7cd 70%, rgba(24, 184, 205, 0.1) 100%);
+    opacity: 1.0;
+    width: 100vw;
+    height: 105.5vh;
+    left: 0;
+    top: -5.5vh;
+    padding: 0;
+    margin: 0;
+    z-index: -1;
+}
+
+.prev-episode::before {
+    display: inline-block;
+    position: relative;
+    content: '';
+    background: url(hishigata.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    width: 1em;
+    height: 1em;
+    padding-bottom: 0.5em;
+}
+
+.next-episode::before {
+    display: inline-block;
+    position: relative;
+    content: '';
+    background: url(hishigata.svg);
+    background-repeat: no-repeat;
+    transform: scale(-1, 1);
+    background-size: 100%;
+    opacity: 0.6;
+    width: 1em;
+    height: 1em;
+    padding-bottom: 0.5em;
+}
+
+
+/**/
+
+.vertical {
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+p {
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+}
+
+.TxtMiruTop
+{
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+}
+
+.vertical .tatechuyoko_top {
+    display: inline-block;
+}
+
+.vertical .tatechuyoko {
+    -webkit-text-combine: horizontal;
+    -ms-text-combine-horizontal: all;
+    text-combine-upright: all;
+}
+
+.vertical .yakumono_spacing {
+    letter-spacing: -0.5em;
+}
+
+.vertical a {
+    text-decoration: overline;
+}
+
+
+/**/
+
+.menu-trigger,
+.menu-trigger span {
+    display: inline-block;
+    transition: all .4s;
+    box-sizing: border-box;
+    padding: 6px 12px;
+    border-radius: 2px;
+}
+
+.menu-trigger {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    background: #e7e7dae3;
+    border: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.menu-trigger:hover {
+    background: #e7e7dae3;
+}
+
+.menu-trigger span {
+    position: absolute;
+    left: 0;
+    padding: 0;
+    margin-left: 0.5rem;
+    width: calc(100% - 1rem);
+    height: 0.2rem;
+    background: #18b7cd;
+    border-radius: 0.2rem;
+}
+
+.menu-trigger span:nth-of-type(1) {
+    top: 0.7rem;
+}
+
+.menu-trigger span:nth-of-type(2) {
+    top: 1.4rem;
+}
+
+.menu-trigger span:nth-of-type(3) {
+    bottom: 0.7rem;
+}
+
+.menu-trigger.active {
+    transform: rotate(360deg);
+}
+
+.menu-trigger.active span:nth-of-type(1) {
+    transform: translateY(0.7rem) rotate(-45deg);
+}
+
+.menu-trigger.active span:nth-of-type(2) {
+    transform: translateY(0) rotate(45deg);
+}
+
+.menu-trigger.active span:nth-of-type(3) {
+    opacity: 0;
+}
+
+.control {
+    top: 0;
+    position: fixed;
+    z-index: 3;
+}
+
+.bottom_menu .control {
+    top: calc(100% - 5rem)
+}
+
+.bottom_menu #contents {
+    padding-top: 2rem;
+}
+
+.bottom_menu #control-button-panel {
+    top: 0;
+}
+
+.hide-control {
+    animation: SlideOut 0.6s;
+    visibility: hidden;
+    transition: opacity 0.4s, visibility 0.4s;
+    margin-left: -1000px;
+    margin-top: -1000px;
+}
+
+@keyframes SlideOut {
+    0% {
+        opacity: 1;
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+    100% {
+        opacity: 0;
+        margin-left: -400px;
+        margin-top: 0px;
+    }
+}
+
+.show-control {
+    display: block;
+    position: fixed;
+    animation: SlideIn 0.6s;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.show-control dt {
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+@keyframes SlideIn {
+    0% {
+        opacity: 0;
+        /*初期状態では透明に*/
+        transform: translateX(-400px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#right-control {
+    height: 100%;
+    width: 50px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.0);
+    z-index: 2;
+}
+
+#left-control {
+    height: 100%;
+    width: 50px;
+    left: 0;
+    background: rgba(255, 255, 255, 0.0);
+    z-index: 2;
+}
+
+
+/**/
+
+.hide-input-url {
+    display: none;
+}
+
+.show-input-url .url {
+    width: 70%;
+    max-width: 40em;
+}
+
+.show-input-url dt {
+    margin: auto;
+}
+
+.show-input-url dd {
+    margin: auto;
+}
+
+.show-input-url .input-box-inner {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.8rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.show-input-url .input-box-outer {
+    width: 90%;
+    height: 90%;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.show-input-url {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 3;
+}
+
+
+/**/
+
+.hide-loading {
+    display: none;
+}
+
+.show-loading {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 4;
+}
+
+.marquee {
+    overflow: hidden;
+    margin: 0;
+    padding: 1em 1em;
+    background: rgba(100, 100, 100, 0.5);
+    position: relative;
+    height: 2em;
+}
+
+.marquee p {
+    max-width: 100vw;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+    white-space: nowrap;
+    color: #fff;
+    font-size: 12px;
+    -moz-animation-name: marquee;
+    -moz-animation-duration: 10s;
+    -moz-animation-timing-function: linear;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-name: marquee;
+    -webkit-animation-duration: 10s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -o-animation-name: marquee;
+    -o-animation-duration: 10s;
+    -o-animation-timing-function: linear;
+    -o-animation-iteration-count: infinite;
+    animation-name: marquee;
+    animation-duration: 10s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes marquee {
+    from {
+        -webkit-transform: translateY(0%);
+    }
+
+    99%,
+    to {
+        -webkit-transform: translateY(-100%);
+    }
+}
+
+@-moz-keyframes marquee {
+    from {
+        -moz-transform: translateY(0%);
+    }
+
+    99%,
+    to {
+        -moz-transform: translateY(-100%);
+    }
+}
+
+@-ms-keyframes marquee {
+    from {
+        -ms-transform: translateY(0%);
+    }
+
+    99%,
+    to {
+        -ms-transform: translateY(-100%);
+    }
+}
+
+@-o-keyframes marquee {
+    from {
+        -o-transform: translateY(0%);
+    }
+
+    99%,
+    to {
+        -o-transform: translateY(-100%);
+    }
+}
+
+@keyframes marquee {
+    from {
+        transform: translateY(-1.2em);
+    }
+
+    50% {
+        transform: translateY(calc(-100% - 1em));
+    }
+    50.01% {
+        transform: translateY(0.2em);
+    }
+    to {
+        transform: translateY(-1.2em);
+    }
+}
+
+/**/
+
+.show-messagbox {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 4;
+    font-size: 1.8rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+}
+
+.show-messagbox .message-inner {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 40px;
+    padding: 10px;
+}
+
+.show-messagbox .message-inner div {
+    padding: 5px;
+    padding-right: 9px;
+}
+
+
+/**/
+
+.hide-favorite {
+    display: none;
+}
+
+.show-favorite {
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(45, 45, 45, 0.5);
+    z-index: 3;
+    top: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+}
+
+.show-favorite .favorite-box-inner {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 40px;
+    height: calc(100% - 80px);
+}
+
+.show-favorite div.sticky_table {
+    background-color: rgba(255, 255, 255, 1.0);
+    margin: 0;
+    overflow: scroll;
+    height: calc(100% - 40px);
+}
+
+.show-favorite table.sticky_table {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+    font-size: 1.8rem;
+    overflow: auto;
+}
+
+.show-favorite table.sticky_table thead th {
+    /* 縦スクロール時に固定する */
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    /* tbody内のセルより手前に表示する */
+    z-index: 1;
+}
+
+.show-favorite table.sticky_table th:first-child {
+    /* 横スクロール時に固定する */
+    position: -webkit-sticky;
+    position: sticky;
+    text-align: center;
+    left: 0;
+}
+
+.show-favorite table.sticky_table thead th:first-child {
+    /* ヘッダー行内の他のセルより手前に表示する */
+    z-index: 2;
+}
+
+.show-favorite table.sticky_table tbody td:nth-child(2),
+.show-favorite table.sticky_table tbody td:nth-child(4) {
+    text-align: right;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.show-favorite thead th {
+    background: #212529;
+    color: #fff;
+    border-right: 0;
+    border-bottom: 2px solid #eee;
+    white-space: nowrap;
+    text-align: left;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+}
+
+.show-favorite tbody {
+    background: #ffffff;
+}
+
+.show-favorite tbody th,
+.show-favorite tbody td {
+    border-bottom: 1px solid #eeeeee;
+    border-right: 0;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+    white-space: nowrap;
+    color: #333;
+}
+
+.show-favorite table.sticky_table tbody th:first-child {
+    /* 横スクロール時に固定する */
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+}
+
+.show-favorite table.sticky_table tbody th:first-child {
+    /* ヘッダー行内の他のセルより手前に表示する */
+    z-index: 1;
+}
+
+.show-favorite tbody tr:nth-child(even) th {
+    background: #fff;
+}
+
+.show-favorite tbody tr:nth-child(even) td {
+    background: #fff;
+}
+
+.show-favorite tbody tr:nth-child(odd) th {
+    background: #f8f8f8;
+}
+
+.show-favorite tbody tr:nth-child(odd) td {
+    background: #f8f8f8;
+}
+
+.show-favorite tbody tr:hover td,
+.show-favorite tbody tr:hover th {
+    background-color: rgb(211, 231, 222) !important;
+}
+
+
+/**/
+
+
+/**/
+
+.hide-config {
+    display: none;
+}
+
+.show-config {
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(45, 45, 45, 0.5);
+    z-index: 3;
+    top: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+}
+
+.show-config .config-box-inner {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 40px;
+    height: calc(100% - 80px);
+    overflow: scroll;
+    font-size: 1.8rem;
+}
+
+.show-config .config-box-inner input {
+    font-size: 1em;
+}
+.show-config .config-box-inner dl {
+    margin-left: 2rem;
+}
+
+.config-radio-area {
+    display: inline-block;
+    color: #fff;
+    background: rgb(38, 126, 167);
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+    clear: both;
+}
+
+.config-radio-area::before {
+    display: block;
+    position: absolute;
+    content: '';
+    border-radius: 50%;
+    transform-origin: center top;
+    transform: rotate(-40deg);
+    background: white url(seigaiha.png);
+    opacity: 0.2;
+    right: -12em;
+    bottom: -30em;
+    width: 30em;
+    height: 30em;
+    z-index: -1;
+}
+
+.config-radio-area input[type="radio"] {
+    display: none;
+}
+
+.config-radio-area label {
+    font-size: 0.8em;
+    display: block;
+    cursor: pointer;
+    margin: 0;
+    float: left;
+    padding: 0.25em 1em;
+    color: #ccc;
+}
+
+.config-radio-area label:last-of-type {
+    border-radius: 0 3px 3px 0;
+}
+
+.config-radio-area input[type="radio"]:checked+label {
+    display: block;
+    position: relative;
+    color: #fff;
+    z-index: 0;
+}
+
+.config-radio-area input[type="radio"]:checked+label::before {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: "";
+    background: #000;
+    opacity: 0.4;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/**/
+
+#novel_list_body th {
+    min-width: 3em;
+}
+
+.check_on .check::before {
+    position: absolute;
+    top: 0.2em;
+    left: 0.1em;
+    width: 1em;
+    height: 0.5em;
+    border-bottom: 0.2em solid #85b97b;
+    border-left: 0.2em solid #85b97b;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg) translateX(-0.4em) translateY(1em);
+    content: "";
+}
+
+button {
+    display: inline-block;
+    color: #fff;
+    background: rgb(173, 150, 75);
+    border: none;
+    line-height: 1.8rem;
+    padding: 0.5rem;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    margin-right: 0px;
+    height: 2.8rem;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: "Noto Serif JP", serif;
+    font-display: swap;
+}
+
+button::before {
+    display: block;
+    position: absolute;
+    content: '';
+    border-radius: 50%;
+    transform-origin: center top;
+    transform: rotate(-40deg);
+    background: white url(seigaiha.png);
+    opacity: 0.2;
+    right: -12em;
+    bottom: -30em;
+    width: 30em;
+    height: 30em;
+    z-index: -1;
+}
+
+button.seigaiha_yellow {
+    background: rgb(173, 150, 75);
+}
+
+button.seigaiha_blue {
+    background: rgb(38, 126, 167);
+}
+
+button:hover {
+    background: rgb(119, 104, 53);
+}
+
+button.seigaiha_yellow:hover {
+    background: rgb(119, 104, 53);
+}
+
+button.seigaiha_blue:hover {
+    background: rgb(29, 96, 128);
+}
+
+button.update {
+    color: #fff;
+    background-color: #28a745;
+}
+
+button.update:hover {
+    background-color: #1c7932;
+}
+
+button.delete {
+    color: #fff;
+    background-color: #dc3545;
+}
+
+button.delete:hover {
+    background-color: #a12632;
+}
+
+button.goto {
+    color: #fff;
+    background: rgb(173, 150, 75);
+}
+
+button.goto:hover {
+    background: rgb(119, 104, 53);
+}
+
+button.goto2 {
+    color: #fff;
+    background-color: #17a2b8;
+}
+
+button.goto2:hover {
+    background-color: #106977;
+}
+
+
+/**/
+
+.Narou #novel_header,
+.Narou #pageBottom,
+.Narou .box_announce_bookmark,
+.Narou .toaster,
+.Narou .narou_modal,
+.Narou .footerbookmark,
+.Narou #recommend,
+.Narou #footer,
+.Narou #pageTop,
+.Narou #impression {
+    display: none;
+}
+
+.Narou .novel_title {
+    font-size: 1.2em;
+    padding-top: 0.8em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+}
+
+.Narou .contents1 {
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+}
+
+.Narou .contents1 {
+    text-align: right;
+}
+
+.Narou .contents1 a:first-child {
+    text-align: left;
+    display: block;
+}
+
+.Narou .contents1 .chapter_title {
+    margin-right: 1.2em;
+}
+
+.Narou .novel_writername {
+    text-align: right;
+    font-weight: bold;
+}
+
+.Narou .chapter_title {
+    padding-top: 0.8em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    background: #eeeee2;
+}
+
+.Narou #novel_contents .novel_subtitle {
+    padding-right: 0.8em;
+    padding-left: 0.8em;
+    font-weight: bold;
+}
+
+.Narou dl.novel_sublist2 {
+    border-left: 1px solid #ddddd0;
+}
+
+.Narou dt.long_update {
+    text-align: right;
+}
+
+.Narou .novel_bn {
+    margin-right: 1.2em;
+}
+
+.Narou .novel_view {
+    margin-right: 4em;
+}
+
+.Narou #novel_ex {
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+}
+
+
+
+/**/
+
+.Kakuyomu .js-viewer-globalheader,
+.Kakuyomu #episodeFooter,
+.Kakuyomu #displaySetting-modalContainer,
+.Kakuyomu #episodeCheer-modalContainer,
+.Kakuyomu #workFollow-modalContainer,
+.Kakuyomu #userFollow-modalContainer,
+.Kakuyomu #author-information-followButton,
+.Kakuyomu #globalHeaderPC-logo,
+.Kakuyomu #globalHeaderPC-inner,
+.Kakuyomu #userProfile-actionButtons,
+.Kakuyomu #userFollow-modalContainer,
+.Kakuyomu #modal-userBlock,
+.Kakuyomu #workFollow,
+.Kakuyomu .widget-workReview-reviewMeta,
+.Kakuyomu #reviews,
+.Kakuyomu #workInformationAside,
+.Kakuyomu #like-modalContainer,
+.Kakuyomu #signUpBalloon,
+.Kakuyomu .contentMain-pagerArrow,
+.Kakuyomu #workMeta,
+.Kakuyomu .widget-internalLinks,
+.Kakuyomu .ui-truncateTextButton-expandButton {
+    display: none;
+}
+
+.Kakuyomu .widget-episodeTitle {
+    padding-right: 0.8em;
+    padding-left: 0.8em;
+    font-weight: bold;
+}
+
+.Kakuyomu #workTitle {
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+}
+
+.Kakuyomu #workAuthor {
+    font-size: 1.2em;
+    text-align: right;
+    font-weight: bold;
+}
+
+.Kakuyomu .kakuyomu_title {
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+}
+
+.Kakuyomu .widget-toc-episode {
+    border-left: 1px solid #ddddd0;
+}
+
+.Kakuyomu .widget-toc-items {
+    list-style: none;
+}
+
+.Kakuyomu .widget-toc-episode-datePublished {
+    display: block;
+    text-align: right;
+    color: black;
+    text-decoration: none;
+    text-orientation: sideways;
+}
+
+.Kakuyomu .emphasisDots {
+    font-style: normal;
+}
+
+.Kakuyomu .emphasisDots span {
+    position: relative;
+    display: inline-block;
+    line-height: 0.1;
+}
+
+.Kakuyomu .emphasisDots span::after {
+    content: "﹅";
+    position: absolute;
+    white-space: nowrap;
+    line-height: 100%;
+    text-align: center;
+    top: -20em;
+    bottom: -20em;
+    letter-spacing: 0em;
+    transform-origin: center right;
+    transform: translate3d(0.95em, 0.125em, 0) scale(0.4);
+}
+
+
+/**/
+
+.Aozora .main_text {
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+    white-space: pre-wrap;
+}
+
+.Aozora table {
+    table-layout: fixed;
+}
+
+.Aozora form {
+    display: none;
+}
+
+.Aozora .midashi_anchor {
+    text-decoration: none;
+}
+
+.Aozora em {
+    font-style: normal;
+}
+
+.Aozora .sesame_dot {
+    -webkit-text-emphasis: filled sesame;
+    text-emphasis: filled sesame;
+}
+
+.Aozora .white_sesame_dot {
+    -webkit-text-emphasis: open sesame;
+    text-emphasis: open sesame;
+}
+
+.Aozora .black_circle {
+    -webkit-text-emphasis: filled circle;
+    text-emphasis: filled circle;
+}
+
+.Aozora .white_circle {
+    -webkit-text-emphasis: open circle;
+    text-emphasis: open circle;
+}
+
+.Aozora .black_up-pointing_triangle {
+    -webkit-text-emphasis: filled triangle;
+    text-emphasis: filled triangle;
+}
+
+.Aozora .white_up-pointing_triangle {
+    -webkit-text-emphasis: open triangle;
+    text-emphasis: open triangle;
+}
+
+.Aozora .bullseye {
+    -webkit-text-emphasis: open double-circle;
+    text-emphasis: open double-circle;
+}
+
+.Aozora .fisheye {
+    -webkit-text-emphasis: filled double-circle;
+    text-emphasis: filled double-circle;
+}
+
+.Aozora .saltire {
+    -webkit-text-emphasis: '×';
+    text-emphasis: '×';
+}
+
+.Aozora .sesame_dot_after {
+    -webkit-text-emphasis: filled sesame;
+    text-emphasis: filled sesame;
+}
+
+.Aozora .white_sesame_dot_after {
+    -webkit-text-emphasis: open sesame;
+    text-emphasis: open sesame;
+}
+
+.Aozora .black_circle_after {
+    -webkit-text-emphasis: filled circle;
+    text-emphasis: filled circle;
+}
+
+.Aozora .white_circle_after {
+    -webkit-text-emphasis: open circle;
+    text-emphasis: open circle;
+}
+
+.Aozora .black_up-pointing_triangle_after {
+    -webkit-text-emphasis: filled triangle;
+    text-emphasis: filled triangle;
+}
+
+.Aozora .white_up-pointing_triangle_after {
+    -webkit-text-emphasis: open triangle;
+    text-emphasis: open triangle;
+}
+
+.Aozora .bullseye_after {
+    -webkit-text-emphasis: open double-circle;
+    text-emphasis: open double-circle;
+}
+
+.Aozora .fisheye_after {
+    -webkit-text-emphasis: filled double-circle;
+    text-emphasis: filled double-circle;
+}
+
+.Aozora .saltire_after {
+    -webkit-text-emphasis: '×';
+    text-emphasis: '×';
+}
+
+.Aozora .jisage {
+    margin-left: var(--jisage);
+}
+
+.Aozora .burasage {
+    margin-left: var(--burasage);
+    text-indent: var(--burasage-turn);
+}
+
+.Aozora .jizume {
+    width: var(--jizume);
+}
+
+.Aozora .chitsuki {
+    text-align: right;
+    margin-right: var(--chitsuki);
+}
+
+.Aozora .chitsuki-float {
+    text-align: right;
+    margin-right: var(--chitsuki);
+    float: right;
+}
+
+.Aozora .underline_solid {
+    text-decoration: underline;
+}
+
+.Aozora .underline_double {
+    text-decoration: underline;
+    text-decoration-style: double;
+}
+
+.Aozora .underline_dotted {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.Aozora .underline_dashed {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+}
+
+.Aozora .underline_wave {
+    text-decoration: underline;
+    text-decoration-style: wavy;
+}
+
+.Aozora .overline_solid {
+    border-top: solid;
+}
+
+.Aozora .overline_double {
+    border-top: double;
+}
+
+.Aozora .overline_dotted {
+    border-top: dotted;
+}
+
+.Aozora .overline_dashed {
+    border-top: dashed;
+}
+
+.Aozora .overline_wave {
+    padding-top: 3px;
+    background-image: linear-gradient(135deg, transparent 35%, black 50%, transparent 65%), linear-gradient(225deg, transparent 35%, black 50%, transparent 65%);
+    background-size: 10px 5px;
+    background-position: 0px 0%, 5px 0%;
+    background-repeat: repeat-x;
+}
+
+.Aozora .futoji {
+    font-weight: bold;
+}
+
+.Aozora .shatai {
+    font-style: italic;
+    font-family: Times New Roman, "ＭＳ Ｐゴシック";
+}
+
+.Aozora ruby.ruby-under {
+    ruby-position: under;
+}
+
+.Aozora .keigakomi {
+    border: 1px solid #000;
+}
+
+.Aozora .dai1 {
+    font-size: large;
+}
+
+.Aozora .dai2 {
+    font-size:  x-large;
+}
+
+.Aozora .dai3, .Aozora .dai4, .Aozora .dai5 {
+    font-size:  xx-large;
+}
+
+.Aozora .sho1 {
+    font-size: small;
+}
+
+.Aozora .sho2 {
+    font-size: x-small;
+}
+
+.Aozora .sho3, .Aozora .sho4, .Aozora .sho5 {
+    font-size: xx-small;
+}
+
+/**/
+
+.Alphapolis .nav,
+.Alphapolis .head,
+.Alphapolis .content-tags,
+.Alphapolis .latest-episode-comments-form
+{
+    display: none;
+}
+
+.Alphapolis #contents,
+.Alphapolis #novelBoby
+{
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+}
+
+.Alphapolis h1.title,
+.Alphapolis h2.title
+{
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+}
+
+.Alphapolis h2.episode-title {
+    font-size: 1.1em;
+    padding-right: 0.8em;
+    padding-left: 0.8em;
+    font-weight: bold;
+}
+
+.Alphapolis .author {
+    font-size: 1.2em;
+    text-align: right;
+    font-weight: bold;
+}
+
+.Alphapolis .episode {
+    border-left: 1px solid #ddddd0;
+}
+
+.Alphapolis .open-date
+{
+    display: block;
+    text-align: right;
+}
+
+.Alphapolis .counter
+{
+    display: none;
+}
+
+/**/
+
+.Hameln form,
+.Hameln .tweetbtn,
+.Hameln a[href*="#"]
+{
+    display: none;
+}
+
+.Hameln .title
+{
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    display: block;
+}
+
+.Hameln .author
+{
+    display: block;
+    font-size: 1.2em;
+    text-align: right;
+    font-weight: bold;
+}
+
+/**/
+
+.Akatsuki #contents-inner2 > p,
+.Akatsuki a[href*="#"],
+.Akatsuki a[href*="twitter"]
+{
+    display: none;
+}
+
+.Akatsuki h1,
+.Akatsuki #LookNovel
+{
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    display: block;
+}
+
+.Akatsuki .body-novel
+{
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+}
+
+.Akatsuki .author
+{
+    display: block;
+    font-size: 1.2em;
+    text-align: right;
+    font-weight: bold;
+}
+
+/**/
+
+.Everystar .pcLayoutSideLeft,
+.Everystar .pcLayoutSideRight,
+.Everystar .footer,
+.Everystar .bodyHeader,
+.Everystar .bodyFooter,
+.Everystar .button,
+.Everystar .promoteBookshelf,
+.Everystar .info,
+.Everystar .meta,
+.Everystar button
+{
+    display: none;
+}
+
+.Everystar .title
+{
+    font-size: 1.2em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    display: block;
+}
+
+.Everystar .nickname
+{
+    display: block;
+    font-size: 1.2em;
+    text-align: right;
+    font-weight: bold;
+}
+
+.Everystar .novelOutlines,
+.Everystar .content
+{
+    margin: 0;
+    line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    font-feature-settings: "palt";
+    line-break: strict;
+    hanging-punctuation: force-end;
+    white-space: pre-wrap;
+}
+
+/**/
+
+.TxtMiruCache p 
+{
+    white-space: pre-wrap;
+    min-width: 1.7em;
+}
+
+.TxtMiruCache p.current_line,
+.TxtMiruCache span.current_line
+{
+    border-top: 2px solid #18b7cd;
+    margin-top:  -10px;
+    padding-top: 8px;
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.TxtMiruCache em {
+    font-style: normal;
+}
+
+/**/
+
+@media screen and (max-height:600px) {
+    #contents {
+        height: calc(100% - 8rem);
+        padding-top: 5rem;
+        padding-bottom: 1rem;
+    }
+    .prev-episode,
+    .next-episode {
+        height: 200%;
+        padding-top: 5rem;
+        padding-bottom: 1rem;
+    }
+    .bottom_menu .control {
+        top: calc(100% - 4.5rem)
+    }
+
+    .bottom_menu #contents {
+        padding-top: 2rem;
+    }
+}
+
+@media screen and (max-width:750px),
+(orientation:portrait) {
+    main.TxtMiru {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+    }
+    #right-control {
+        display: none;
+        height: 100%;
+        width: 50px;
+        right: 0;
+        background: rgba(255, 255, 255, 0.0);
+        z-index: 2;
+    }
+    #left-control {
+        display: none;
+        height: 100%;
+        width: 50px;
+        left: 0;
+        background: rgba(255, 255, 255, 0.0);
+        z-index: 2;
+    }
+    .show-input-url .url {
+        width: 90%;
+    }
+    .show-config .config-box-inner {
+        margin-left: 0;
+        margin-right: 0;
+        height: calc(100% - 80px);
+    }
+    .show-favorite .favorite-box-inner {
+        margin-left: 0;
+        margin-right: 0;
+        height: calc(100% - 80px);
+    }
+}
+
+@media screen and (min-width:900px),
+(orientation:landscape) {
+    .prev-episode {
+        padding-right: calc(env(safe-area-inset-right) + 0.8em);
+    }
+}
