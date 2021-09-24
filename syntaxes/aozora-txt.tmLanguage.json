@@ -31,18 +31,12 @@
 		},
 		"ruby": {
 			"patterns": [{
-				"match": "[^\\|｜]+(《)(.*?)(》)",
-				"captures":{
-					"1": {
-						"name": "keyword.control.txt"
-					},
-					"2": {
-						"name": "string"
-					},
-					"3": {
-						"name": "keyword.control.txt"
-					}
-				}
+				"match": "((｜.+?)|([一-龠々仝〆〇ヶ]+|[-_@0-9a-zA-Z]+|[—―＿＠０-９Ａ-Ｚａ-ｚ]+))(《)(.+?)(》)",
+				"captures": {
+					"4": { "name": "string.quoted" },
+					"6": { "name": "string.quoted" }
+				  },
+				  "name": "keyword"
 			}]
 		},
 		"keywords": {

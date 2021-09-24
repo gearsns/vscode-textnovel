@@ -74,7 +74,7 @@ export const narou2html = (text: string, curRow: number = -1) => {
 					rubyStart2Text(rubyStartIndex);
 				} else if (text.match(/[　 ].+/)) {
 					// 々 及び 〇(ゼロ) は漢字として認識させない
-					let pattern = '(.*?)((?:[一-龠仝〆ヶ]|[-_@0-9a-zA-Z]|[—―＿＠０-９Ａ-Ｚａ-ｚ　 ])+)$';
+					let pattern = '(.*?)((?:[一-龠仝〆ヶ]+|[-_@0-9a-zA-Z]+|[—―＿＠０-９Ａ-Ｚａ-ｚ　 ]+))$';
 					const re = new RegExp(pattern, 'g');
 					const preText = lineItem[lineItem.length - 1].text;
 					if (preText.match(re)) {
@@ -88,7 +88,7 @@ export const narou2html = (text: string, curRow: number = -1) => {
 					}
 				} else {
 					// 々 及び 〇(ゼロ) は漢字として認識させない
-					let pattern = '(.*?)((?:[一-龠仝〆ヶ]|[-_@0-9a-zA-Z]|[—―＿＠０-９Ａ-Ｚａ-ｚ])+)$';
+					let pattern = '(.*?)((?:[一-龠仝〆ヶ]+|[-_@0-9a-zA-Z]+|[—―＿＠０-９Ａ-Ｚａ-ｚ]+))$';
 					const re = new RegExp(pattern, 'g');
 					const preText = lineItem[lineItem.length - 1].text;
 					if (preText.match(re)) {

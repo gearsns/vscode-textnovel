@@ -1,9 +1,10 @@
-# Change Log
+# テキスト小説用拡張機能 Changelog
+## リリースノート
+### 1.0.1
 
-All notable changes to the "text-novel" extension will be documented in this file.
+ルビ一覧とルビの候補機能を追加
+ルビのハイライトを修正
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### 1.0.0
 
-## [Unreleased]
-
-- Initial release
+初期リリース

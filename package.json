@@ -2,13 +2,13 @@
     "name": "text-novel",
     "displayName": "テキスト小説",
     "description": "テキストで小説を書く際のルビ追加やプレビューが表示できる拡張機能です。",
-    "version": "0.0.1",
+    "version": "1.0.1",
     "publisher": "gearsns",
     "icon": "icon.png",
     "repository": {
-		"type": "git",
-		"url": "https://github.com/gearsns/vscode-textnovel"
-	},
+        "type": "git",
+        "url": "https://github.com/gearsns/vscode-textnovel"
+    },
     "engines": {
         "vscode": "^1.60.0"
     },
@@ -16,6 +16,7 @@
         "Other"
     ],
     "activationEvents": [
+        "onView:rubyAllFilesInWorkspace",
         "onLanguage:aozoratext",
         "onLanguage:naroutext",
         "onCommand:textNovel.launchPreview.vscode",
@@ -24,6 +25,14 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "rubyAllFilesInWorkspace",
+                    "name": "ルビ一覧"
+                }
+            ]
+        },
         "configuration": {
             "type": "object",
             "title": "TextNovel:テキスト小説",
@@ -76,9 +85,19 @@
             {
                 "command": "textNovel.insertAozoraAnnotation",
                 "title": "TextNovel:青空文庫注記を追加"
+            },
+            {
+                "command": "textNovel.outputRubyAll",
+                "title": "TextNovel:ルビの一覧を出力",
+                "icon": "$(output)"
+            },
+            {
+                "command": "textNovel.discoverRubyAllFilesInWorkspace",
+                "title": "TextNovel:ルビの抽出",
+                "icon": "$(refresh)"
             }
         ],
-        "keybindings":[
+        "keybindings": [
             {
                 "command": "textNovel.insertRuby",
                 "when": "editorLangId == aozoratext || editorLangId == naroutext",
@@ -93,6 +112,18 @@
             }
         ],
         "menus": {
+            "view/title": [
+                {
+                    "command": "textNovel.outputRubyAll",
+                    "when": "view == rubyAllFilesInWorkspace",
+                    "group": "navigation"
+                },
+                {
+                    "command": "textNovel.discoverRubyAllFilesInWorkspace",
+                    "when": "view == rubyAllFilesInWorkspace",
+                    "group": "navigation"
+                }
+            ],
             "editor/title": [
                 {
                     "command": "textNovel.launchPreview.vscode",
@@ -236,6 +267,7 @@
     "dependencies": {
         "axios": "^0.21.4",
         "iconv-lite": "^0.6.3",
+        "jschardet": "^3.0.0",
         "ws": "^8.2.2"
     }
 }
