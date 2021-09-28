@@ -286,7 +286,7 @@ const convert_tatechuuyoko_num = doc => {
 const yakumono_space = node => {
 	if (node.nodeType == 3) {
 		//let re_yakumono_space = /([（〔「『［【〈《‘“）〕」』』］】〉》’”。．、，]+)/g
-		const re_yakumono_space = /([（〔「『［【〈《）〕」』』］】〉》。．、，]+)/g
+		const re_yakumono_space = /([（〔「『［【〈《）〕」』］】〉》。．、，]+)/g
 		if (node.parentNode.className == "yakumo_spacing"
 			|| !node.nodeValue.match(re_yakumono_space)) {
 			return
@@ -435,9 +435,9 @@ const counterJapaneseHyphenation = doc => {
 			previousText = RegExp.$1
 			previousNode.nodeValue = previousNode.nodeValue.replace(/[\(\[（〔「『［【〈《‘“]+$/, "")
 		}
-		if (nextNode && nextNode.nodeType == 3 && nextNode.nodeValue.match(/^([(\)\[）〕」』』］】〉》’”。．、，]+)/)) {
+		if (nextNode && nextNode.nodeType == 3 && nextNode.nodeValue.match(/^([(\)\[）〕」』］】〉》’”。．、，]+)/)) {
 			nextText = RegExp.$1
-			nextNode.nodeValue = nextNode.nodeValue.replace(/^[(\)\[）〕」』』］】〉》’”。．、，]+/, "")
+			nextNode.nodeValue = nextNode.nodeValue.replace(/^[(\)\[）〕」』］】〉》’”。．、，]+/, "")
 		} else if (nextNode && nextNode.nodeType == 1 && nextNode.className == "yakumono_spacing") {
 			nextMoveNode = nextNode
 		}
@@ -458,7 +458,11 @@ const counterJapaneseHyphenation = doc => {
 			if (nextText.length > 0) {
 				span.appendChild(doc.createTextNode(nextText))
 			} else if (nextMoveNode) {
+				let nextNextMoveNode = nextMoveNode.nextSibling
 				span.appendChild(nextMoveNode)
+				if(nextNextMoveNode){
+					span.appendChild(nextNextMoveNode)
+				}
 			}
 		}
 	}

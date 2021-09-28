@@ -2,7 +2,7 @@
     "name": "text-novel",
     "displayName": "テキスト小説",
     "description": "テキストで小説を書く際のルビ追加やプレビューが表示できる拡張機能です。",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publisher": "gearsns",
     "icon": "icon.png",
     "repository": {
@@ -51,6 +51,16 @@
                     "type": "number",
                     "default": "500",
                     "description": "プレビュー反映までの遅延時間(ミリ秒)"
+                },
+                "editor.keyword on": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "キーワードファイルを使用する"
+                },
+                "editor.keyword file": {
+                    "type": "string",
+                    "default": "keyword.txt",
+                    "description": "キーワードファイル名"
                 }
             }
         },
@@ -84,7 +94,8 @@
             },
             {
                 "command": "textNovel.insertAozoraAnnotation",
-                "title": "TextNovel:青空文庫注記を追加"
+                "title": "TextNovel:青空文庫注記を追加",
+                "icon": "$(comment)"
             },
             {
                 "command": "textNovel.outputRubyAll",
@@ -128,16 +139,21 @@
                 {
                     "command": "textNovel.launchPreview.vscode",
                     "when": "editorLangId == aozoratext || editorLangId == naroutext",
-                    "group": "navigation@3"
+                    "group": "navigation@4"
                 },
                 {
                     "command": "textNovel.insertDots",
                     "when": "editorLangId == aozoratext || editorLangId == naroutext",
-                    "group": "navigation@2"
+                    "group": "navigation@3"
                 },
                 {
                     "command": "textNovel.insertRuby",
                     "when": "editorLangId == aozoratext || editorLangId == naroutext",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "textNovel.insertAozoraAnnotation",
+                    "when": "editorLangId == aozoratext",
                     "group": "navigation@1"
                 }
             ],
@@ -266,6 +282,7 @@
     },
     "dependencies": {
         "axios": "^0.21.4",
+        "chokidar": "^3.5.2",
         "iconv-lite": "^0.6.3",
         "jschardet": "^3.0.0",
         "ws": "^8.2.2"

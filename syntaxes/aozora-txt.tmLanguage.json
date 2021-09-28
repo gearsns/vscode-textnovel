@@ -7,24 +7,21 @@
 		},
 		{
 			"include": "#ruby"
-		},
-		{
-			"include": "#keywords"
 		}
 	],
 	"repository": {
 		"command": {
 			"patterns": [{
-				"match": "(＃［)(.*?)(］)",
+				"match": "(［＃)(.*?)(］)",
 				"captures":{
 					"1": {
-						"name": "keyword.control.txt"
+						"name": "keyword"
 					},
 					"2": {
-						"name": "string"
+						"name": "string.quoted"
 					},
 					"3": {
-						"name": "keyword.control.txt"
+						"name": "keyword"
 					}
 				}
 			}]
@@ -37,12 +34,6 @@
 					"6": { "name": "string.quoted" }
 				  },
 				  "name": "keyword"
-			}]
-		},
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.txt",
-				"match": "[\\|｜]"
 			}]
 		}
 	},
