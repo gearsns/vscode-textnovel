@@ -54,7 +54,19 @@ VS Codeのワークスペース機能を使い、同一フォルダに「keyword
 2. ブラウザでプレビュー
 ![preview browser](./image/text-novel-06.png)
 
-エディタ内で、TxtMiruサーバーを稼働させるため同じネットワーク内であればスマホやiPadなどでもプレビューを表示させることができます。
+プレビュー用TxtMiruサーバーを本拡張機能内で動かしているため同じネットワーク内であればスマホやiPadなどでも入力中の小説をリアルタイムにプレビューできます。
+
+また、プレビュー画面は「[TxtMiru on the Web](https://gearsns.github.io/TxtMiruOnTheWeb/index.html) 」のエンジンを使用しているため、小説サイトに投稿後の小説もプレビューで表示できます。<br>
+対応サイトは、以下の通り
+* [小説家になろう](https://syosetu.com)
+* [カクヨム](https://kakuyomu.jp)
+* [アルファポリス](https://www.alphapolis.co.jp)
+* [ハーメルン](https://syosetu.org)
+* [暁](http://www.akatsuki-novels.com/)
+* [エブリスタ](https://estar.jp)
+* [マグネット](https://www.magnet-novels.com)
+* [pixiv](https://www.pixiv.net/novel)
+* [青空文庫](https://www.aozora.gr.jp)
 
 ### 4. 設定
 
@@ -75,6 +87,13 @@ HTTPサーバーとWebSocketサーバー用のポート番号を変更するこ�
 ![input url](./image/text-novel-09.png)
 
 ## リリースノート
+### 1.0.3
+
+* TxtMiru on the Web 1.0.6.0の修正を反映
+	* pixivを対応サイトに追加
+	* お気に入り 未読ページに「New」のマークを追加
+	* 行頭禁則文字が、行頭に来ないようにhtmlタグを調整
+
 ### 1.0.2
 
 * キーワードでハイライトする機能を追加

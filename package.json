@@ -2,7 +2,7 @@
     "name": "text-novel",
     "displayName": "テキスト小説",
     "description": "テキストで小説を書く際のルビ追加やプレビューが表示できる拡張機能です。",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "gearsns",
     "icon": "icon.png",
     "repository": {

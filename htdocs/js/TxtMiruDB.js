@@ -13,46 +13,15 @@ export class TxtMiruDB {
 	}
 	add = async item => await this.connection.insert(item)
 	select = async item => await this.connection.select(item)
-	getSettingList = async () => {
-		/*
-		return await fetch("/api/setting", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"func": "Get"})
-		})
-		.then(response => response.json())
-		.then(json => json)
-		*/
-		return this.db.Setting.toArray()
-	}
+	getSettingList = async () => await this.db.Setting.toArray()
 	setSetting = async (item) => {
 		if (Array.isArray(item)) {
-			/*
-			return await fetch("/api/setting", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({"func": "Put", data: item})
-			})
-			*/
 			return await this.db.transaction('rw', this.db.Setting, async () => {
 				for (const i of item) {
 					await this.db.Setting.put(i)
 				}
 			})
 		}
-		/*
-		return await fetch("/api/setting", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"func": "Put", data: [item]})
-		})
-		*/
 		return await this.db.Setting.put(item)
 	}
 	addFavorite = async (name, author, url, cur_url, cur_page, max_page) => {
