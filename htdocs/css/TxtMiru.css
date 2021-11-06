@@ -609,6 +609,8 @@ p {
     background-color: rgba(255, 255, 255, 0.8);
     margin: 40px;
     padding: 10px;
+    max-width: calc(100vw - 100px);
+    word-break: break-all;
 }
 
 .show-messagbox .message-inner div {
@@ -1105,6 +1107,10 @@ button.goto2:hover {
 .Kakuyomu .widget-internalLinks,
 .Kakuyomu .ui-truncateTextButton-expandButton {
     display: none;
+}
+
+.Kakuyomu {
+    text-align: justify;
 }
 
 .Kakuyomu .widget-episodeTitle {

@@ -2,7 +2,7 @@
     "name": "text-novel",
     "displayName": "テキスト小説",
     "description": "テキストで小説を書く際のルビ追加やプレビューが表示できる拡張機能です。",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "publisher": "gearsns",
     "icon": "icon.png",
     "repository": {
@@ -51,6 +51,21 @@
                     "type": "number",
                     "default": "500",
                     "description": "プレビュー反映までの遅延時間(ミリ秒)"
+                },
+                "editor.ruby export type": {
+                    "type": "string",
+                    "enum": [
+                        "colon",
+                        "tab",
+                        "novel"
+                    ],
+                    "enumDescriptions": [
+                        "コロン区切り",
+                        "タブ区切り",
+                        "小説ルビ形式「｜テキスト《ルビ》」"
+                    ],
+                    "default": "colon",
+                    "description": "ルビの一覧の出力形式"
                 },
                 "editor.keyword on": {
                     "type": "boolean",

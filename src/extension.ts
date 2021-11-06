@@ -198,7 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
 				let files: vscode.Uri[] = [];
 				await Promise.all(
 					vscode.workspace.workspaceFolders.map(async workspaceFolder => {
-						watchFiles.push(`${workspaceFolder.uri.fsPath}\\${filename}`);
+						watchFiles.push(`${workspaceFolder.uri.fsPath}/${filename}`);
 						const pattern = new vscode.RelativePattern(workspaceFolder, filename);
 						for (const file of await vscode.workspace.findFiles(pattern)) {
 							files.push(file);
@@ -226,7 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
 							if (item.keyword.length > 0) {
 								keywordList.push({ value: item.keyword, description: item.description });
 							}
-							if(line.match(/(.*)\t(.*)$/)){
+							if (line.match(/(.*)\t(.*)$/)) {
 								item.keyword = RegExp.$1;
 								item.description = new vscode.MarkdownString(`**${item.keyword}**\n\n----\n\n${RegExp.$2}`);
 							} else {
@@ -242,8 +242,10 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 		if (watchFiles.length > 0) {
-			watcher = chokidar.watch(watchFiles, { persistent: true });
+			watcher = chokidar.watch(watchFiles, { persistent: true, ignoreInitial: true });
+			watcher.on('add', path => loadKeywordFile());
 			watcher.on('change', path => loadKeywordFile());
+			watcher.on('unlink', path => loadKeywordFile());
 		}
 		_onDidChangeSemanticTokens.fire();
 	};
@@ -410,24 +412,23 @@ export function activate(context: vscode.ExtensionContext) {
 			return a.rb.localeCompare(b.rb) || a.rt.localeCompare(b.rt);
 		});
 	};
-	context.subscriptions.push(vscode.commands.registerCommand('textNovel.outputRubyAll', async (e) => {
-		const newFile = vscode.Uri.parse('untitled:ルビ一覧.txt');
-		vscode.workspace.openTextDocument(newFile).then(document => {
-			const edit = new vscode.WorkspaceEdit();
-			let text = "";
-			if (gListRuby) {
-				for (const r of gListRuby) {
+	context.subscriptions.push(vscode.commands.registerCommand('textNovel.outputRubyAll', async e => {
+		const config = vscode.workspace.getConfiguration('editor');
+		const exportType = config.get<string>("ruby export type", "colon");
+		let text = "";
+		if (gListRuby) {
+			for (const r of gListRuby) {
+				if (exportType === "tab") {
+					text += `${r.rb}\t${r.rt}\n`;
+				} else if (exportType === "novel") {
+					text += `｜${r.rb}《${r.rt}》\n`;
+				} else { // colon
 					text += `${r.rb} : ${r.rt}\n`;
 				}
 			}
-			edit.insert(newFile, new vscode.Position(0, 0), text);
-			return vscode.workspace.applyEdit(edit).then(success => {
-				if (success) {
-					vscode.window.showTextDocument(document);
-				} else {
-					vscode.window.showInformationMessage('Error!');
-				}
-			});
+		}
+		vscode.workspace.openTextDocument({ content: text, language: "aozoratext" }).then(document => {
+			vscode.window.showTextDocument(document);
 		});
 	}));
 	context.subscriptions.push(vscode.commands.registerCommand('textNovel.discoverRubyAllFilesInWorkspace', async (e) => {
@@ -446,21 +447,29 @@ export function activate(context: vscode.ExtensionContext) {
 		loadKeywordFile();
 	}));
 	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(e => {
-		delayConvertTextToHtml();
+		if (e && (e.document.languageId === "aozoratext" || e.document.languageId === "naroutext")) {
+			delayConvertTextToHtml();
+		}
 	}));
 	context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(e => {
-		if (vscode.window.activeTextEditor && e === vscode.window.activeTextEditor.document) {
-			delayConvertTextToHtml();
+		if (e && (e.languageId === "aozoratext" || e.languageId === "naroutext")) {
+			if (vscode.window.activeTextEditor && e === vscode.window.activeTextEditor.document) {
+				delayConvertTextToHtml();
+			}
 		}
 	}));
 	context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => {
-		if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
-			delayConvertTextToHtml();
+		if (e && (e.document.languageId === "aozoratext" || e.document.languageId === "naroutext")) {
+			if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
+				delayConvertTextToHtml();
+			}
 		}
 	}));
 	context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => {
-		if (e.textEditor === vscode.window.activeTextEditor && curAanchorLine !== e.textEditor.selection.anchor.line) {
-			delayConvertTextToHtml();
+		if (e && (e.textEditor.document.languageId === "aozoratext" || e.textEditor.document.languageId === "naroutext")) {
+			if (e.textEditor === vscode.window.activeTextEditor && curAanchorLine !== e.textEditor.selection.anchor.line) {
+				delayConvertTextToHtml();
+			}
 		}
 	}));
 	//
