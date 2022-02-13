@@ -648,7 +648,7 @@ export class TxtMiru {
 		}).catch(err => {
 			this.setTxtMiruIndexSite()
 		}).finally(() => {
-			this.mainElement.focus()
+			//this.mainElement.focus()
 			this.txtMiruLoading.end()
 		})
 	}
