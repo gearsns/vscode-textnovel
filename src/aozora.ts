@@ -80,7 +80,7 @@ export const aozoraText2Html = (text: string, cursorRow = -1, curCommand: string
 		"窓大見出し": { class: "mado-o-midashi", tag: "h3" },
 		"窓中見出し": { class: "mado-naka-midashi", tag: "h4" },
 		"窓小見出し": { class: "mado-ko-midashi", tag: "h5" },
-		"縦中横": { class: "tatechuyokoi", tag: "span" },
+		"縦中横": { class: "tatechuyoko", tag: "span" },
 		"傍点": { class: "sesame_dot", tag: "em" },
 		"白ゴマ傍点": { class: "white_sesame_dot", tag: "em" },
 		"丸傍点": { class: "black_circle", tag: "em" },
@@ -110,10 +110,10 @@ export const aozoraText2Html = (text: string, cursorRow = -1, curCommand: string
 		"太字": { class: "futoji", tag: "span" },
 		"斜体": { class: "shatai", tag: "span" },
 		"キャプション": { class: "caption", tag: "span" },
-		"改丁": { class: "notes kaicho", tag: "span" },
-		"改ページ": { class: "notes new-page", tag: "span" },
-		"改見開き": { class: "notes new-mihiraki", tag: "span" },
-		"改段": { class: "notes new-block", tag: "span" },
+		"改丁": { class: "notes kaicho", tag: "span", context: true },
+		"改ページ": { class: "notes new-page", tag: "span", context: true },
+		"改見開き": { class: "notes new-mihiraki", tag: "span", context: true },
+		"改段": { class: "notes new-block", tag: "span", context: true },
 		"地付き": { class: "chitsuki", tag: "div" },
 		"ページの左右中央": { class: "chuou", tag: "div" },
 		"左にルビ付き": { class: "ruby-under", tag: "ruby" },
@@ -129,6 +129,7 @@ export const aozoraText2Html = (text: string, cursorRow = -1, curCommand: string
 		"横組み": { class: "yokogumi", blockTag: "div", tag: "span" },
 		"大きな文字": { class: "dai", blockTag: "div", tag: "span" },
 		"小さな文字": { class: "sho", blockTag: "div", tag: "span" },
+		"後書き": { class: "afterword", tag: "div" },
 	};
 	// ルビと青空文庫コマンド対象にテキストと青空文庫コマンドを分割
 	let ret = [];
@@ -420,6 +421,8 @@ export const aozoraText2Html = (text: string, cursorRow = -1, curCommand: string
 						textArr[textArr.length - 1] = `<image ${command.text} />`;
 					} else if (command.tag.match(/\//)) {
 						textArr.push(`${command.text}<${command.tag}>`);
+					} else if (command.content === true) {
+						textArr.push(`<${command.tag} ${command.text}></${command.tag}>`);
 					} else if (command.content) {
 						textArr.push(`<${command.tag} ${command.text}>${command.content}</${command.tag}>`);
 					} else {

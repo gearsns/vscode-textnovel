@@ -212,7 +212,7 @@ export const narou2html = (text: string, curRow: number = -1) => {
 			lineItem[rubyStartIndex].type = "text";
 		}
 		for (const item of lineItem) {
-			if (item.type === "ruby") {
+			if (item.type === "ruby" && lineItem[item.start]) {
 				lineItem[item.start].type = "ruby_rb";
 			}
 		}
@@ -229,7 +229,7 @@ export const narou2html = (text: string, curRow: number = -1) => {
 		for (const item of lineItem) {
 			if (item.type === "text") {
 				htmlArr.push(totext(item.text));
-			} else if (item.type === "ruby") {
+			} else if (item.type === "ruby" && lineItem[item.start]) {
 				htmlArr.push(`<ruby>${lineItem[item.start].text}<rt>${item.text}</rt></ruby>`);
 			} else if (item.type === "tag") {
 				htmlArr.push(item.text);

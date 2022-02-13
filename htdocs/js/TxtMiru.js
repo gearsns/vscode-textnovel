@@ -1,9 +1,10 @@
-import { TxtMiruSiteManager } from './TxtMiruSitePlugin.js?1.0.8.0'
-import { TxtMiruFavorite } from './TxtMiruFavorite.js?1.0.8.0'
-import { TxtMiruInputURL } from './TxtMiruInputURL.js?1.0.8.0'
-import { TxtMiruLoading } from './TxtMiruLoading.js?1.0.8.0'
-import { TxtMiruConfig } from './TxtMiruConfig.js?1.0.8.0'
-import { TxtMiruDB } from './TxtMiruDB.js?1.0.8.0'
+import { TxtMiruSiteManager } from './TxtMiruSitePlugin.js?1.0.12.0'
+import { TxtMiruFavorite } from './TxtMiruFavorite.js?1.0.12.0'
+import { TxtMiruLocalFile } from './TxtMiruLocalFile.js?1.0.12.0'
+import { TxtMiruInputURL } from './TxtMiruInputURL.js?1.0.12.0'
+import { TxtMiruLoading } from './TxtMiruLoading.js?1.0.12.0'
+import { TxtMiruConfig } from './TxtMiruConfig.js?1.0.12.0'
+import { TxtMiruDB } from './TxtMiruDB.js?1.0.12.0'
 
 const TxtMiruTitle = "TxtMiru on the vscode"
 // DOM
@@ -53,7 +54,7 @@ export class TxtMiru {
 	display_popup = false
 	cache_list = []
 	default_setting = {
-		"WebServerUrl": "http://localhost:8080",
+		"WebServerUrl": "http://localhost:8080/api",
 		"WebSocketServerUrl": "ws://localhost:5001"
 	}
 	setting = {...this.default_setting}
@@ -77,6 +78,7 @@ export class TxtMiru {
 			}).finally(() => {
 				TxtMiruSiteManager.txtMiru = this
 				this.txtMiruLoading = new TxtMiruLoading()
+				this.txtMiruLocalFile = new TxtMiruLocalFile(this)
 				this.txtMiruInputURL = new TxtMiruInputURL(this)
 				this.txtMiruFavorite = new TxtMiruFavorite(this)
 				this.txtMiruConfig = new TxtMiruConfig(this)
@@ -161,6 +163,7 @@ export class TxtMiru {
 		return this.txtMiruDB.setSetting(item_list)
 	}
 	//
+	clearCache = () => this.cache_list.length = 0
 	getCache = () => this.cache_list
 	addCache = item => {
 		for(let i=0, l = this.cache_list.length; i<l; ++i){
@@ -274,6 +277,29 @@ export class TxtMiru {
 		el.scrollTo(pos + offset, 0)
 	}
 	//
+	setHistory = (cur_url, title) => {
+		if(!cur_url.searchParams.get("url")){
+			return
+		}
+		let history = this.setting["history"]
+		if(history){
+			const check_url = cur_url.searchParams.get("url")
+			let buf_history = []
+			buf_history.push({url: cur_url.searchParams.get("url"), name: title, scroll_pos: cur_url.searchParams.get("scroll_pos")})
+			for(const item of JSON.parse(history)){
+				if(item.url !== check_url){
+					buf_history.push(item)
+				}
+			}
+			if(buf_history.length > 5){
+				buf_history.length = 5
+			}
+			this.setting["history"] = JSON.stringify(buf_history)
+		} else {
+			this.setting["history"] = JSON.stringify([{url: cur_url.searchParams.get("url"), name: title, scroll_pos: cur_url.searchParams.get("scroll_pos")}])
+		}
+		this.txtMiruDB.setSetting([{ id: "history", value: this.setting["history"] }])
+	}
 	setScrollPosState = () => {
 		clearTimeout(this.set_scroll_pos_state_timer_id)
 		const cur_url = new URL(window.location)
@@ -283,8 +309,10 @@ export class TxtMiru {
 			'TxtMiru': true
 		}
 		window.history.replaceState(state, title, cur_url)
+		this.setHistory(cur_url, title)
 	}
 	//
+	loadLocalFile = () => this.txtMiruLocalFile.show(this)
 	inputURL = () => this.txtMiruInputURL.show(this)
 	//
 	showFavorite = () => this.txtMiruFavorite.show(this)
@@ -299,6 +327,7 @@ export class TxtMiru {
 		"Home": (e) => this.pageTop(),
 		"End": (e) => this.pageEnd(),
 		"KeyL": (e) => this.inputURL(),
+		"KeyO": (e) => this.loadLocalFile(),
 		"KeyF": (e) => this.showFavorite(),
 		"KeyC": (e) => this.showConfig(),
 		"Ctrl+ArrowLeft": (e) => this.gotoNextEpisode(),
@@ -371,6 +400,7 @@ export class TxtMiru {
 			this.LoadNovel(url.searchParams.get('url'), url.searchParams.get('scroll_pos'), true)
 		})
 		//
+		this.txtMiruLocalFile.setEvent(this)
 		this.txtMiruInputURL.setEvent(this)
 		this.txtMiruFavorite.setEvent(this)
 		this.txtMiruConfig.setEvent(this)
@@ -410,6 +440,30 @@ export class TxtMiru {
 			}
 		}
 		this.nextFunc = null
+		//
+		let history = this.setting["history"]
+		if(history){
+			history = JSON.parse(history)
+			let i = 0
+			for(const item of history){
+				++i
+				const el = document.getElementById(`TxtMiruTopContentsHistory${i}`)
+				if(el){
+					el.style.display = "block"
+					el.innerHTML = `${i}. <a href='${item.url}' id='TxtMiruTopContentsHistoryAnchor${i}'>${item.name}</a>`
+					const el_a = document.getElementById(`TxtMiruTopContentsHistoryAnchor${i}`)
+					el_a.addEventListener("click", e => {
+						e.preventDefault()
+						e.stopPropagation()
+						this.LoadNovel(`${item.url}`, parseFloat(item.scroll_pos))
+					})
+				}
+			}
+			const el = document.getElementById(`TxtMiruTopContentsHistoryList`)
+			if(i > 0 && el){
+				el.style.display = "block"
+			}
+		}
 	}
 	//
 	LoadNovel = (url, scroll_pos = 0, no_history = false) => {
@@ -423,6 +477,7 @@ export class TxtMiru {
 			}
 			history.replaceState(state, title, old_url)
 			history.pushState(state, title, old_url)
+			this.setHistory(old_url, title)
 		}
 		//
 		this.contentsElement.setAttribute("prev-episode", "")
@@ -497,7 +552,7 @@ export class TxtMiru {
 			this.contentsElement.innerHTML = html
 			for (const el_a of this.contentsElement.getElementsByTagName("A")) {
 				const href = el_a.getAttribute("href")
-				if (href && href.match(/^http/)) {
+				if (href && href.match(/^(?:http|https|txtmiru):\/\//i)) {
 					let support = false
 					for (let site of TxtMiruSiteManager.SiteList()) {
 						if (site.Match(href)) {
@@ -589,10 +644,11 @@ export class TxtMiru {
 			} else {
 				this.mainElement.scrollTo(this.mainElement.scrollWidth, 0)
 			}
+			this.setHistory(new URL(window.location), document.title)
 		}).catch(err => {
 			this.setTxtMiruIndexSite()
 		}).finally(() => {
-			//this.mainElement.focus()
+			this.mainElement.focus()
 			this.txtMiruLoading.end()
 		})
 	}

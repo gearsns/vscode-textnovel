@@ -416,6 +416,53 @@ p {
     z-index: 2;
 }
 
+/**/
+
+.hide-local-file {
+    display: none;
+}
+
+.show-local-file .url {
+    width: 70%;
+    max-width: 40em;
+}
+
+.show-local-file dt {
+    margin: auto;
+}
+
+.show-local-file dd {
+    margin: auto;
+}
+
+.show-local-file .local-file-box-inner {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.8rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.show-local-file .local-file-box-outer {
+    width: 90%;
+    height: 90%;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.show-local-file {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 3;
+}
 
 /**/
 
@@ -719,6 +766,45 @@ p {
     padding-left: 0.5em;
     white-space: nowrap;
     color: #333;
+}
+
+.show-favorite tr.loading th {
+    position: relative;
+}
+
+.show-favorite tr.loading th::before {
+    content: "";
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1.6rem;
+    border: 0.2rem solid rgba(200, 200, 200, 0.3);
+    border-top-color: rgba(255, 120, 0, 0.8);
+    box-sizing: border-box;
+    top: 30%;
+    left: 30%;
+    position: absolute;
+    margin-top: -0.2rem;
+    margin-left: -0.2rem;
+    animation: loading 1.2s linear infinite;
+    -webkit-animation: loading 1.2s linear infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+@-webkit-keyframes loading {
+    0% {
+        -webkit-transform: rotate(0deg)
+    }
+    100% {
+        -webkit-transform: rotate(360deg)
+    }
 }
 
 .show-favorite table.sticky_table tbody th:first-child {
@@ -1411,6 +1497,33 @@ button.goto2:hover {
     font-size: xx-small;
 }
 
+.Aozora .contents1 .chapter_title {
+    margin-right: 1.2em;
+}
+
+.Aozora .novel_writername {
+    text-align: right;
+    font-weight: bold;
+}
+
+.Aozora .chapter_title {
+    padding-top: 0.8em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    background: #eeeee2;
+}
+
+.Aozora #novel_contents .novel_subtitle {
+    padding-right: 0.8em;
+    padding-left: 0.8em;
+    font-weight: bold;
+}
+
+.Aozora dl.novel_sublist2 {
+    border-left: 1px solid #ddddd0;
+}
+
 /**/
 
 .Alphapolis .nav,
@@ -1702,7 +1815,84 @@ button.goto2:hover {
     text-orientation: sideways;
 }
 
+.NovelupPlus .login,
+.NovelupPlus .sub_navi,
+.NovelupPlus #alternative_header,
+.NovelupPlus .sns_set,
+.NovelupPlus .footer-nav,
+.NovelupPlus #section_suggest_list,
+.NovelupPlus #footer,
+.NovelupPlus #story_episode_toolbar,
+.NovelupPlus .scroll-top
+{
+    display: none;
+}
 
+.NovelupPlus p
+{
+    white-space: pre-wrap;
+}
+
+.NovelupPlus .episode_list ul
+{
+    list-style: none;
+    padding-inline-start: unset;
+}
+
+.NovelupPlus .episode_list li
+{
+    border-left: 1px solid #ddddd0;
+}
+
+.NovelupPlus .episode_list .chapter
+{
+    border: none;
+    padding-top: 0.8em;
+    padding-right: 1.2em;
+    padding-left: 1.2em;
+    font-weight: bold;
+    background: #eeeee2;
+}
+
+.NovelupPlus .episode_list .chapter cite
+{
+    font-style: normal;
+}
+
+.NovelupPlus .episode_list .update_date,
+.NovelupPlus .episode_list .comment_link,
+.NovelupPlus .episode_list p
+{
+    text-align: right;
+    white-space: normal;
+}
+.NovelupPlus .episode_list .comment_link p
+{
+    float: right;
+    margin-inline-start: 2rem;
+}
+.NovelupPlus .episode_title h1
+{
+    font-size: 1em;
+}
+
+.NovelupPlus .novel_title
+{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.NovelupPlus .novel_author p
+{
+    text-align: right;
+}
+.NovelupPlus .move_set div
+{
+    margin-inline-end: 2rem;
+}
+.NovelupPlus .move_set
+{
+   display: flex;
+}
 /**/
 
 @media screen and (max-height:600px) {

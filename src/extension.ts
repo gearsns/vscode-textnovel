@@ -164,7 +164,8 @@ export function activate(context: vscode.ExtensionContext) {
 				"テキスト小説プレビュー",
 				vscode.ViewColumn.Two, { enableScripts: true }
 			);
-			previewWebviewPanel.webview.html = `<!DOCTYPE html><style>body,iframe { padding:0;margin:0;border:none;width:100vw;height:100vh;min-height:100vh;overflow:hidden }</style><body><iframe src="http://localhost:8080" /></body>`;
+			const config = vscode.workspace.getConfiguration('server');
+			previewWebviewPanel.webview.html = `<!DOCTYPE html><style>body,iframe { padding:0;margin:0;border:none;width:100vw;height:100vh;min-height:100vh;overflow:hidden }</style><body><iframe src="http://localhost:${config.get<number>("httpserver port", 8080)}" /></body>`;
 			previewWebviewPanel.onDidDispose(() => { previewWebviewPanel = undefined; });
 		}
 		delayConvertTextToHtml();
@@ -172,7 +173,8 @@ export function activate(context: vscode.ExtensionContext) {
 	// ブラウザでプレビュー
 	context.subscriptions.push(vscode.commands.registerCommand('textNovel.launchPreview.browser', (e) => {
 		startServer();
-		vscode.env.openExternal(vscode.Uri.parse("http://localhost:8080"));
+		const config = vscode.workspace.getConfiguration('server');
+		vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${config.get<number>("httpserver port", 8080)}`));
 		delayConvertTextToHtml();
 	}));
 	// プレビューサーバーの起動
@@ -465,6 +467,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 	}));
+	// HTML変換
 	context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => {
 		if (e && (e.textEditor.document.languageId === "aozoratext" || e.textEditor.document.languageId === "naroutext")) {
 			if (e.textEditor === vscode.window.activeTextEditor && curAanchorLine !== e.textEditor.selection.anchor.line) {

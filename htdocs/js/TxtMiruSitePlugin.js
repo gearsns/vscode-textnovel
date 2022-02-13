@@ -1,5 +1,7 @@
-import { TxtMiruLib } from './TxtMiruLib.js?1.0.8.0'
-import fetchJsonp from './fetch-jsonp.js'
+import { TxtMiruLib } from './TxtMiruLib.js?1.0.12.0'
+import fetchJsonp from './lib/fetch-jsonp.js'
+import { narou2html } from './lib/narou.js?1.0.12.0'
+import { AozoraText2Html } from './lib/aozora.js?1.0.12.0'
 
 const appendSlash = text => {
 	if (!text.match(/\/$/)) {
@@ -40,6 +42,157 @@ const hasParentClassName = (node, name) => {
 		return hasParentClassName(p, name)
 	}
 	return false
+}
+
+const parseHtml = (url, index_url, html, class_name) => {
+	let item = {
+		className: class_name
+	}
+	let doc = TxtMiruLib.HTML2Document(html)
+	if (doc.getElementsByClassName("main_text").length == 0) {
+		doc.body.innerHTML = `<div class="main_text">${doc.body.innerHTML}</div>`
+	}
+	// title
+	document.title = doc.title
+	for (const e of doc.getElementsByClassName("title")) {
+		if (e.textContent) {
+			document.title = e.textContent
+		}
+	}
+	//
+	html = doc.body.innerHTML
+	if (html.length > 50000) {
+		let target_no = 0
+		if (url.match(/\.[A-Z0-9]+\?([0-9]+)/i)) {
+			target_no = parseInt(RegExp.$1)
+		}
+		const main_e = doc.getElementsByClassName("main_text")[0]
+		let subtitle = {}
+		let n = 0
+		if (target_no === 0) {
+			let e_list = []
+			let page = 0
+			for (const e of main_e.childNodes) {
+				if (e.className && e.className.match(/jisage/)) {
+					const e_o_midashi = e.getElementsByClassName("o-midashi")
+					const e_naka_midashi = e.getElementsByClassName("naka-midashi")
+					if (e_o_midashi.length > 0) {
+						++n
+						++page
+						let sub_html = e_o_midashi[0].innerHTML
+						sub_html = sub_html.replace(/<a ([\s\S]*?)<\/a>/img, "<span$1</span>")
+						subtitle[n] = { type: 1, text: sub_html }
+					} else if (e_naka_midashi.length > 0) {
+						if (subtitle[n] && subtitle[n].type === 1) {
+
+						} else {
+							++page
+						}
+						++n
+						let sub_html = e_naka_midashi[0].innerHTML
+						sub_html = sub_html.replace(/<a ([\s\S]*?)<\/a>/img, "<span$1</span>")
+						subtitle[n] = { type: 2, text: sub_html, page: page }
+						if (page === target_no + 1) {
+							item["next-episode"] = `${index_url}?${target_no + 1}`
+							item["next-episode-text"] = sub_html || "次へ"
+						}
+					}
+				}
+				if (page === target_no) {
+					e_list.push(e)
+				}
+			}
+			main_e.textContent = ""
+			for (const e of e_list) {
+				main_e.appendChild(e)
+			}
+			let arr = []
+			for (let i = 0; i <= n; ++i) {
+				const s = subtitle[i]
+				if (s) {
+					if (s.type === 1) {
+						const e_ctitle = document.createElement("div")
+						e_ctitle.className = "chapter_title"
+						e_ctitle.innerHTML = s.text
+						arr.push(e_ctitle)
+					} else {
+						const e_dl_stitle = document.createElement("dl")
+						e_dl_stitle.className = "novel_sublist2"
+						const e_dd_stitle = document.createElement("dd")
+						e_dd_stitle.className = "subtitle"
+						const e_a_stitle = document.createElement("a")
+						e_a_stitle.innerHTML = s.text
+						e_a_stitle.href = `${index_url.replace(/.*\//, "./")}?${s.page}`
+						e_dd_stitle.appendChild(e_a_stitle)
+						e_dl_stitle.appendChild(e_dd_stitle)
+						arr.push(e_dl_stitle)
+					}
+				}
+			}
+			const e_div = document.createElement("div")
+			e_div.className = "index_box"
+			for (const e of arr) {
+				e_div.appendChild(e)
+			}
+			main_e.appendChild(e_div)
+		} else if (target_no > 0) {
+			let e_list = []
+			let page = 0
+			item["prev-episode"] = `${index_url}`
+			item["prev-episode-text"] = "目次へ"
+			for (const e of main_e.childNodes) {
+				if (e.className && e.className.match(/jisage/)) {
+					const e_o_midashi = e.getElementsByClassName("o-midashi")
+					const e_naka_midashi = e.getElementsByClassName("naka-midashi")
+					if (e_o_midashi.length > 0) {
+						++n
+						++page
+						let sub_html = e_o_midashi[0].innerHTML
+						sub_html = sub_html.replace(/<a ([\s\S]*?)<\/a>/img, "<span$1</span>")
+						subtitle[n] = { type: 1, text: sub_html }
+					} else if (e_naka_midashi.length > 0) {
+						if (subtitle[n] && subtitle[n].type === 1) {
+
+						} else {
+							++page
+						}
+						++n
+						let sub_html = e_naka_midashi[0].innerHTML
+						sub_html = sub_html.replace(/<a ([\s\S]*?)<\/a>/img, "<span$1</span>")
+						subtitle[n] = { type: 2, text: sub_html, page: page }
+						if (page === target_no) {
+							document.title += " " + e_naka_midashi[0].textContent
+						} else if (page === target_no - 1) {
+							item["prev-episode"] = `${index_url}?${target_no - 1}`
+							item["prev-episode-text"] = sub_html || "前へ"
+						} else if (page === target_no + 1) {
+							item["next-episode"] = `${index_url}?${target_no + 1}`
+							item["next-episode-text"] = sub_html || "次へ"
+							break
+						}
+					}
+				}
+				if (page === target_no || (page === 0 && (e.className === "title" || e.className === "author"))) {
+					if (e.className === "title") {
+						let e_anchor = document.createElement("a")
+						e_anchor.href = `${index_url.replace(/.*\//, "./")}`
+						e_anchor.appendChild(e)
+						e_list.push(e_anchor)
+					} else {
+						e_list.push(e)
+					}
+				}
+			}
+			main_e.textContent = ""
+			for (const e of e_list) {
+				main_e.appendChild(e)
+			}
+		}
+	}
+	TxtMiruLib.KumihanMod(url, doc)
+	html = doc.body.innerHTML
+	item["html"] = html
+	return [item, doc]
 }
 
 class TxtMiruSitePlugin {
@@ -97,18 +250,214 @@ class LocalSite extends TxtMiruSitePlugin {
 }
 TxtMiruSiteManager.AddSite(new LocalSite())
 
-class TxtMiruCacheSite extends TxtMiruSitePlugin {
-	Match = url => url.match(/^TxtMiru:/)
-	GetDocument = (txtMiru, url) => {
-		for (const cache of txtMiru.getCache()) {
-			if (cache.url == url) {
-				let doc = TxtMiruLib.HTML2Document(cache.html)
-				document.title = doc.title
-				TxtMiruLib.KumihanMod(url, doc)
-				let item = {
-					className: "TxtMiruCache Aozora",
-					html: `<div class="main_text">${doc.body.innerHTML}</div>`
+function string_to_buffer(src) {
+	return (new Uint8Array([].map.call(src, function (c) {
+		return c.charCodeAt(0)
+	}))).buffer;
+}
+const buffer_to_string = (buf) => {
+	return String.fromCharCode.apply("", new Uint8Array(buf))
+}
+const large_buffer_to_string = buf => {
+	var tmp = [];
+	var len = 1024;
+	for (var p = 0; p < buf.byteLength; p += len) {
+		tmp.push(buffer_to_string(buf.slice(p, p + len)));
+	}
+	return tmp.join("");
+}
+let loadedEncoding = undefined
+const arrayBufferToUnicodeString = async arraybuffer => {
+	if (loadedEncoding === false) {
+		return "ファイルを読み込めませんでした。"
+	} else if (loadedEncoding === undefined) {
+		try {
+			await TxtMiruLib.LoadScript("js/lib/encoding.min.js")
+			loadedEncoding = true
+		} catch {
+			loadedEncoding = false
+			return "ファイルを読み込めませんでした。"
+		}
+	}
+	var array = new Uint8Array(arraybuffer)
+	return Encoding.codeToString(Encoding.convert(array, "UNICODE"))
+}
+let loadedJSZip = undefined
+const arrayBufferUnZip = async arraybuffer => {
+	if (loadedJSZip === false) {
+		return "ファイルを読み込めませんでした。"
+	} else if (loadedJSZip === undefined) {
+		try {
+			await TxtMiruLib.LoadScript("js/lib/jszip.min.js")
+			loadedJSZip = true
+		} catch {
+			loadedJSZip = false
+			return "ファイルを読み込めませんでした。"
+		}
+	}
+	await arrayBufferToUnicodeString([])
+	const new_zip = new JSZip()
+	return await new_zip.loadAsync(arraybuffer, { decodeFileName: fileNameBinary => Encoding.codeToString(Encoding.convert(fileNameBinary, "UNICODE")) }).then(async zip => {
+		let ret = []
+		zip.forEach(async (relativePath, zipEntry) => {
+			ret.push(zipEntry)
+		})
+		return ret
+	})
+}
+
+const epubIndex = async (txtMiru, index_url, cache) => {
+	await new Promise((resolve, reject) => {
+		const reader = new FileReader()
+		reader.onload = async () => {
+			if (cache.zip) {
+				let opf_filename = null
+				let arr = await arrayBufferUnZip(reader.result)
+				for (const item of arr) {
+					let item_cache = { url: `${index_url}/${item.name}`, html: null, zipEntry: item }
+					if (item.name.match(/\.(?:txt)$/i)) {
+						item_cache.narou = cache.narou
+						item_cache.aozora = cache.aozora
+					} else if (item.name === "META-INF/container.xml") {
+						const str_container_xml = await arrayBufferToUnicodeString(await item.async("arraybuffer"))
+						const parser = new DOMParser()
+						const container_xml = parser.parseFromString(str_container_xml, "text/xml")
+						for (const rootfile of container_xml.getElementsByTagName("rootfile")) {
+							opf_filename = rootfile.getAttribute("full-path")
+						}
+					}
+					txtMiru.addCache(item_cache)
 				}
+				let html = ""
+				console.log(opf_filename)
+				if (opf_filename) {
+					for (const item of arr) {
+						if (item.name === opf_filename) {
+							// opf_filename 相対パス
+							const str_opf_xml = await arrayBufferToUnicodeString(await item.async("arraybuffer"))
+							const parser = new DOMParser()
+							const opf_xml = parser.parseFromString(str_opf_xml, "text/xml")
+							let toc_flag = false
+							for (const itemref of opf_xml.getElementsByTagName("spine")) {
+								const toc = itemref.getAttribute("properties")
+								if (toc === "nav") {
+									toc_flag = true
+								}
+							}
+							let toc_array = []
+							for (const itemref of opf_xml.getElementsByTagName("itemref")) {
+								const id = itemref.getAttribute("idref")
+								const e = opf_xml.getElementById(id)
+								if (e) {
+									toc_array.push(
+										{
+											href: e.getAttribute("href")
+										}
+									)
+								}
+							}
+							cache.toc = toc_array
+							break
+						}
+					}
+				}
+				resolve(html)
+			} else {
+				resolve("html")
+			}
+		}
+		reader.readAsArrayBuffer(cache.file)
+	})
+}
+
+class TxtMiruCacheSite extends TxtMiruSitePlugin {
+	Match = url => url.match(/^TxtMiru:/i)
+	loadImg = async file => {
+		let ret = ""
+		await new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = () => {
+				resolve(reader.result)
+			}
+			reader.readAsDataURL(file)
+		}).then(result => {
+			ret = result
+		})
+		return ret
+	}
+	IndexUrl = url => url.replace(/\.([A-Z0-9]+)(?:\?[0-9]+)*$/i, ".$1")
+	GetDocument = async (txtMiru, url) => {
+		const index_url = this.IndexUrl(url)
+		for (const cache of txtMiru.getCache()) {
+			if (cache.url === index_url) {
+				if (!cache.html && cache.zipEntry) {
+					let html = await arrayBufferToUnicodeString(await cache.zipEntry.async("arraybuffer"))
+					if (cache.narou) {
+						html = narou2html(html)
+					} else if (cache.aozora) {
+						html = AozoraText2Html(html)
+					}
+					cache.html = html
+				} else if (!cache.html && cache.file) {
+					// ローカルファイルの読み込み
+					await new Promise((resolve, reject) => {
+						const reader = new FileReader()
+						reader.onload = async () => {
+							if (cache.zip) {
+								if (cache.url.match(/\.epub$/)) {
+									//epubIndex(txtMiru, index_url, cache)
+								}
+								let html = "<ul>"
+								let arr = await arrayBufferUnZip(reader.result)
+								for (const item of arr) {
+									html += `<li><a href='${index_url.replace(/^.*\//i, "./")}/${item.name}'>${item.name}</a></li>`
+									let item_cache = { url: `${index_url}/${item.name}`, html: null, zipEntry: item }
+									if (item.name.match(/\.(?:txt)$/i)) {
+										item_cache.narou = cache.narou
+										item_cache.aozora = cache.aozora
+									}
+									txtMiru.addCache(item_cache)
+								}
+								html += "</ul>"
+								resolve(html)
+							} else {
+								let html = await arrayBufferToUnicodeString(reader.result)
+								if (cache.narou) {
+									html = narou2html(html)
+								} else if (cache.aozora) {
+									html = AozoraText2Html(html)
+								}
+								resolve(html)
+							}
+						}
+						reader.readAsArrayBuffer(cache.file)
+					}).then(html => {
+						cache.html = html
+					})
+				}
+				let [item, doc] = parseHtml(url, index_url, `<div class="main_text">${cache.html}</div>`, "TxtMiruCache Aozora")
+				let html = doc.body.innerHTML
+				if (html.match(/img/i)) {
+					// イメージファイルは、blobで読んでおく
+					for (const el of doc.getElementsByTagName("IMG")) {
+						const src = el.getAttribute("src")
+						for (const cache_img of txtMiru.getCache()) {
+							if (cache_img.url === src) {
+								try {
+									if (cache_img.zipEntry) {
+										el.src = window.btoa(String.fromCharCode.apply(null, new Uint16Array(await cache_img.zipEntry.async("arraybuffer"))))
+									} else if (cache_img.file) {
+										el.src = await this.loadImg(cache_img.file)
+									}
+								} catch {
+								}
+								break
+							}
+						}
+					}
+					html = doc.body.innerHTML
+				}
+				item["html"] = html
 				return Promise.resolve(item)
 			}
 		}
@@ -453,72 +802,9 @@ class Aozora extends TxtMiruSitePlugin {
 				}
 				return ""
 			})
-		let doc = TxtMiruLib.HTML2Document(html)
-		if (doc.getElementsByClassName("main_text").length == 0) {
-			doc.body.innerHTML = `<div class="main_text">${doc.body.innerHTML}</div>`
-		}
-		document.title = doc.title
-		TxtMiruLib.KumihanMod(url, doc)
-
-		let item = {
-			className: "Aozora",
-			"next-episode-text": "次へ",
-			"prev-episode-text": "前へ",
-			"episode-index-text": "青空文庫",
-			"episode-index": "https://www.aozora.gr.jp"
-		}
-		const next_episode = doc.getElementById("next-episode")
-		if (next_episode) {
-			next_episode.style.display = "none"
-			item["next-episode"] = next_episode.href
-			item["next-episode-text"] = next_episode.innerText
-		}
-		const prev_episode = doc.getElementById("prev-episode")
-		if (prev_episode) {
-			prev_episode.style.display = "none"
-			item["prev-episode"] = prev_episode.href
-			item["prev-episode-text"] = prev_episode.innerText
-		}
-		if (html.length > 50000) {
-			let target_no = 1
-			if (url.match(/\.html\?([0-9]+)/)) {
-				target_no = parseInt(RegExp.$1)
-			}
-			let subtitle = {}
-			let n = 0
-			for (const main_e of doc.getElementsByClassName("main_text")) {
-				let remove_nodes = []
-				for (const e of main_e.childNodes) {
-					if ((e.className && e.className.match(/jisage/))
-						&& (e.innerHTML && e.innerHTML.match(/naka\-midashi/))) {
-						++n
-						subtitle[n] = e.innerText
-					}
-					if (n > 0 && n < target_no) {
-						remove_nodes.push(e)
-					}
-					if (n > target_no) {
-						remove_nodes.push(e)
-					}
-				}
-				for (const e of remove_nodes) {
-					main_e.removeChild(e)
-				}
-				main_e.setAttribute("max-page", n)
-			}
-			if (target_no > 1) {
-				item["prev-episode"] = `${index_url}?${target_no - 1}`
-				item["prev-episode-text"] = subtitle[target_no - 1] || "前へ"
-			}
-			if (target_no < n) {
-				item["next-episode"] = `${index_url}?${target_no + 1}`
-				item["next-episode-text"] = subtitle[target_no + 1] || "次へ"
-			}
-		}
-		let title = ""
-		//
-		item["html"] = title + doc.body.innerHTML
-		doc.innerHTML = ""
+		let [item, doc] = parseHtml(url, index_url, html, "Aozora")
+		item["episode-index-text"] = "青空文庫"
+		item["episode-index"] = "https://www.aozora.gr.jp"
 		return item
 	}
 	GetDocument = (txtMiru, url) => {
@@ -1719,7 +2005,7 @@ class Pixiv extends TxtMiruSitePlugin {
 			return {
 				url: removeSlash(url),
 				max_page: novel_contents.body.displaySeriesContentCount,
-				name:  novel_contents.body.title,
+				name: novel_contents.body.title,
 				author: novel_contents.body.userName
 			}
 		}
@@ -1749,3 +2035,197 @@ class Pixiv extends TxtMiruSitePlugin {
 	Name = () => "pixiv"
 }
 TxtMiruSiteManager.AddSite(new Pixiv())
+
+class NovelupPlus extends TxtMiruSitePlugin {
+	Match = url => url.match(/https:\/\/novelup\.plus/)
+	GetDocument = (txtMiru, url) => {
+		let req_url = `${txtMiru.setting["WebServerUrl"]}?${new URLSearchParams({
+			url: url,
+			charset: "UTF-8"
+		})}`
+		return fetch(req_url, null)
+			.then(response => response.text())
+			.then(text => {
+				let doc = TxtMiruLib.HTML2Document(text)
+				document.title = doc.title
+				TxtMiruLib.KumihanMod(url, doc)
+
+				let item = {
+					className: "NovelupPlus",
+					"next-episode-text": "次へ",
+					"prev-episode-text": "前へ",
+					"episode-index-text": "小説投稿サイトノベルアップ＋",
+					"episode-index": "https://novelup.plus/"
+				}
+				let m_index_url = url.match(/https:\/\/novelup\.plus\/story\/[\d]+(.*)/)
+				if (m_index_url && m_index_url[1]) {
+					for (let e of doc.getElementsByClassName("novel_title")) {
+						item["episode-index-text"] = e.innerText
+						item["episode-index"] = m_index_url[0]
+					}
+				}
+				for(let anchor of doc.getElementsByTagName("A")){
+					if(anchor.innerText.match(/次へ/)){
+						item["next-episode"] = anchor.href
+						item["next-episode-text"] = "次へ"
+					} else if(anchor.innerText.match(/前へ/)){
+						item["prev-episode"] = anchor.href
+						item["prev-episode-text"] = "前へ"
+					}
+				}
+				for (let el of doc.getElementsByClassName("widget-toc-episode-datePublished")) {
+					for (let el_span of el.getElementsByTagName("SPAN")) {
+						let m_date = el_span.innerText.match(/([0-9]+)年([0-9]+)月([0-9]+)日/)
+						if (m_date) {
+							el_span.innerText = `${m_date[1]}年${("0" + m_date[2]).slice(-2)}月${("0" + m_date[3]).slice(-2)}日`.replace(/[0-9]/g, s => {
+								return String.fromCharCode(s.charCodeAt(0) + 0xFEE0)
+							})
+						}
+					}
+				}
+				let title = ""
+				for (let el_a of doc.getElementsByTagName("A")) {
+					const href = el_a.getAttribute("href") || ""
+					if (!href.match(/^http/)) {
+						el_a.href = TxtMiruLib.ConvertAbsoluteURL(url, href) //`https://kakuyomu.jp${href}`
+					}
+					if (el_a.getAttribute("data-link-click-action-name") == "WorksEpisodesEpisodeHeaderPreviousEpisode") {
+						item["prev-episode"] = el_a.href
+						item["prev-episode-text"] = el_a.innerHTML
+						el_a.style.display = "none"
+					} else if (el_a.getAttribute("data-link-click-action-name") == "WorksEpisodesEpisodeFooterNextEpisode") {
+						item["next-episode"] = el_a.href
+						item["next-episode-text"] = el_a.innerHTML
+						el_a.style.display = "none"
+					} else if (el_a.getAttribute("itemprop") == "item") {
+						item["episode-index"] = el_a.href
+						item["episode-index-text"] = "目次へ"
+						title = `<a class="kakuyomu_title" href="${el_a.href}">${el_a.getAttribute("title")}</a>`
+						el_a.style.display = "none"
+					}
+				}
+				item["html"] = title + doc.body.innerHTML
+				return item
+			})
+			.catch(err => {
+				return err
+			})
+	}
+	GetInfo = async (txtMiru, url, callback = null) => {
+		if (Array.isArray(url)) {
+			let results = []
+			for (let u of url) {
+				if (this.Match(u)) {
+					let item = await this.GetInfo(txtMiru, u, callback)
+					if (item != null) {
+						results.push(item)
+					}
+				}
+			}
+			return results
+		} else if (this.Match(url)) {
+			if (callback) {
+				callback([url])
+			}
+			let index_url = ""
+			url = appendSlash(url)
+			let m_index_url = url.match(/(https:\/\/novelup\.plus\/story\/.*?)\//)
+			if (m_index_url) {
+				index_url = m_index_url[1]
+			} else {
+				return null
+			}
+			let req_url = `${txtMiru.setting["WebServerUrl"]}?${new URLSearchParams({
+				url: `${index_url}`,
+				charset: "UTF-8"
+			})}`
+			let html = await fetch(req_url)
+				.then(response => response.text())
+				.then(text => text)
+			let parser = new DOMParser()
+			let doc = parser.parseFromString(html, "text/html")
+			let max_page = 1
+			let title = doc.titie
+			let author = doc.titie
+			for (let e of doc.getElementsByClassName("read_time")) {
+				let m = e.innerText.match(/エピソード数：([\d]+)/)
+				if (m) {
+					max_page = parseInt(m[1])
+				}
+			}
+			for (let e of doc.getElementsByClassName("novel_title")) {
+				title = e.innerText
+			}
+			for (let e of doc.getElementsByClassName("novel_author")) {
+				author = e.innerText
+			}
+			return {
+				url: removeSlash(url),
+				max_page: max_page,
+				name: title,
+				author: author
+			}
+		}
+		return null
+	}
+	GetPageNo = async (txtMiru, url) => {
+		if (this.Match(url)) {
+			url = appendSlash(url)
+			let m_url = url.match(/(https:\/\/novelup\.plus\/story\/[\d]+)\/([\d]+)\/$/)
+			if (m_url) {
+				let page_url = m_url[2]
+				let index_url = m_url[1]
+				let page_no = 0
+				let url_page = 1
+				while (true) {
+					let bMatchUrl = false
+					let req_url = `${txtMiru.setting["WebServerUrl"]}?${new URLSearchParams({
+						url: url_page == 1 ? `${index_url}` : `${index_url}?p=${url_page}`,
+						charset: "UTF-8"
+					})}`
+					let html = await fetch(req_url)
+						.then(response => response.text())
+						.then(text => text)
+					let parser = new DOMParser()
+					let doc = parser.parseFromString(html, "text/html")
+					for (let e of doc.getElementsByClassName("episode_link")) {
+						for(let anchor of e.getElementsByTagName("A")){
+							++page_no
+							if (anchor.href.includes(page_url)) {
+								bMatchUrl = true
+								break
+							}
+							break
+						}
+						if(bMatchUrl){
+							break
+						}
+					}
+					if(bMatchUrl){
+						break
+					}
+					// 目次 次のページ取得
+					bMatchUrl = true
+					url_page++
+					let next_url = `?p=${url_page}`
+					for(let anchor of doc.getElementsByTagName("A")){
+						if(anchor.href.includes(next_url)){
+							bMatchUrl = false
+							break
+						}
+					}
+					if(bMatchUrl){
+						break
+					}
+				}
+				console.log(page_no)
+				return { url: removeSlash(url), page_no: page_no, index_url: index_url }
+			} else if (url.match(/https:\/\/kakuyomu\.jp\/works\/[^\/]+\/$/)) {
+				return { url: removeSlash(url), page_no: 0, index_url: removeSlash(url) }
+			}
+		}
+		return null
+	}
+	Name = () => "小説投稿サイトノベルアップ＋"
+}
+TxtMiruSiteManager.AddSite(new NovelupPlus())
